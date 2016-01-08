@@ -1,0 +1,78 @@
+---
+title: "Software Carpentry Workshop Example"
+author: "Martina Morris"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette 
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  
+---
+
+This is meant to demostrate the use of a git repo along with R, and knitr/markdown
+
+I was hoping to keep the .md file with "keep_md: true" but i'm not sure how to specify that in the YAML code above.
+
+## Vignette Info
+
+Here we will show how to write a function to summarize some data
+
+## Data
+
+The data here come from [NOAA](http://www.ncdc.noaa.gov/qclcd/QCLCD), and I've downloaded the December 2015 dailies for Sand Point (in Seattle).  The datafile is in the repo, and it's called QCLData.txt
+
+## Function
+
+The function summarizes data from an arbitrary file -- the filename is the argument to the function -- but the data from NOAA was sufficiently hinky that the commands in the function really only work with that one file... 
+
+```{r, fig.show='hold'}
+summarize <- function(datafile) {
+  mydir <- "../"  # data directory
+  rawdata <- read.csv(paste(mydir, datafile, sep=""), header=T, na.strings="M") #read it in
+  aaa <- rawdata[,c("Tmax","Tmin", "Tavg", "Depart")] #subset
+  
+#  par(mfrow=c(1,2))  
+  plot(aaa$Tmin, aaa$Tmax, pch="@", col="red",
+       main="Dec 2015 Daily Temps", xlab="Min", ylab="Max")
+  abline(lm(aaa$Tmax ~ aaa$Tmin))
+  
+  plot(aaa$Depart, col="blue",
+       main="Departure from Average", xlab="Date", ylab="Degrees")
+  abline(h=0, col="red")
+  
+  meanvec <- colMeans(aaa, na.rm=TRUE)
+  print(round(meanvec,2))
+  
+  return(meanvec)
+}
+```
+
+So, now let's use the function:
+
+```{r}
+summarize("QCLData.txt")
+```
+
+Voila!
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))
