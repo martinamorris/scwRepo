@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 test
 second line
 third line
+=======
+hello again
+>>>>>>> parent of 26ef2e8... my revision to second.txt
