@@ -28,8 +28,9 @@ The function summarizes data from an arbitrary file -- the filename is the argum
 
 ```{r, fig.show='hold'}
 summarize <- function(datafile) {
-  mydir <- "../"  # data directory
-  rawdata <- read.csv(paste(mydir, datafile, sep=""), header=T, na.strings="M") #read it in
+  mydir <- "DataFiles/"  # data directory
+  rawdata <- read.csv(paste(mydir, datafile, sep=""), skip = 6,
+                      header=T, na.strings="M") #read it in
   aaa <- rawdata[,c("Tmax","Tmin", "Tavg", "Depart")] #subset
   
 #  par(mfrow=c(1,2))  
@@ -42,8 +43,6 @@ summarize <- function(datafile) {
   abline(h=0, col="red")
   
   meanvec <- colMeans(aaa, na.rm=TRUE)
-  print(round(meanvec,2))
-  
   return(meanvec)
 }
 ```
@@ -52,9 +51,27 @@ So, now let's use the function:
 
 ```{r}
 summarize("QCLData.txt")
+ls()
+```
+
+Note that the function is in the workspace, but the meanvec is not.  The "return(meanvec)" sent it to the screen.  To send it to an object in the workspace:
+
+```{r}
+meanvec.test <- summarize("QCLData.txt")
+ls()
+```
+
+But this way you don't see it printed on the screen.  You can do both at once with:
+
+```{r}
+(meanvec.test <- summarize("QCLData.txt"))
+ls()
 ```
 
 Voila!
+
+And just to check that the R project association is working correctly with the Git local repository I created with Git Gui (cloning the repo from GitHub), I'll see if this commit/push this works.
+
 
 You can enable figure captions by `fig_caption: yes` in YAML:
 
